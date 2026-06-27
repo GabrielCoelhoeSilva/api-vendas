@@ -1,6 +1,6 @@
 package gabrielcoelho.vendasapi.vendedor.entity;
 
-import gabrielcoelho.vendasapi.venda.entity.Venda;
+import gabrielcoelho.vendasapi.pedido.entity.Pedido;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(
-        name = "vendedores",
+        name = "vendedor",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_vendedor_codigo", columnNames = "codigo"),
                 @UniqueConstraint(name = "uk_vendedor_email", columnNames = "email")
@@ -51,7 +51,7 @@ public class Vendedor {
 
     @OneToMany(mappedBy = "vendedor", fetch = FetchType.LAZY)
     @Builder.Default
-    private List<Venda> pedidos = new ArrayList<>();
+    private List<Pedido> pedidos = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

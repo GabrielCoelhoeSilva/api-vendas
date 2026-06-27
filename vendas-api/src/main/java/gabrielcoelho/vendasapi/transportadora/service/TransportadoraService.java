@@ -25,4 +25,3 @@ public interface TransportadoraService {
 
     TransportadoraResponse inativar(Long id);
 }
-

@@ -1,6 +1,6 @@
-package gabrielcoelho.vendasapi.transportadora.exception;
+package gabrielcoelho.vendasapi.shared.exception;
 
-import gabrielcoelho.vendasapi.transportadora.dto.response.ErrorResponse;
+import gabrielcoelho.vendasapi.shared.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,13 @@ import java.util.stream.Collectors;
 
 /**
  * Tratamento global e centralizado de exceções da API, garantindo
- * respostas de erro padronizadas em todo o módulo.
+ * respostas de erro padronizadas em todos os módulos.
+ *
+ * Único @RestControllerAdvice da aplicação: antes existiam handlers
+ * duplicados em transportadora.exception e vendedor.exception, ambos
+ * mapeando MethodArgumentNotValidException e Exception.class — o que
+ * gera "Ambiguous @ExceptionHandler" em tempo de execução quando dois
+ * @ControllerAdvice concorrem pelo mesmo tipo de exceção.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {

@@ -4,12 +4,14 @@ import gabrielcoelho.vendasapi.transportadora.entity.Transportadora;
 import gabrielcoelho.vendasapi.transportadora.dto.request.TransportadoraCreateRequest;
 import gabrielcoelho.vendasapi.transportadora.dto.request.TransportadoraUpdateRequest;
 import gabrielcoelho.vendasapi.transportadora.dto.response.TransportadoraResponse;
-import gabrielcoelho.vendasapi.transportadora.exception.BusinessRuleException;
-import gabrielcoelho.vendasapi.transportadora.exception.DuplicateResourceException;
-import gabrielcoelho.vendasapi.transportadora.exception.ResourceNotFoundException;
+import gabrielcoelho.vendasapi.shared.exception.BusinessRuleException;
+import gabrielcoelho.vendasapi.shared.exception.DuplicateResourceException;
+import gabrielcoelho.vendasapi.shared.exception.ResourceNotFoundException;
 import gabrielcoelho.vendasapi.transportadora.mapper.TransportadoraMapper;
 import gabrielcoelho.vendasapi.transportadora.repository.TransportadoraRepository;
 import gabrielcoelho.vendasapi.transportadora.repository.TransportadoraSpecification;
+import gabrielcoelho.vendasapi.pedido.entity.StatusPedido;
+import gabrielcoelho.vendasapi.pedido.repository.PedidoRepository;
 import gabrielcoelho.vendasapi.transportadora.service.TransportadoraService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Implementação das regras de negócio do módulo de Transportadoras.
@@ -43,6 +46,7 @@ public class TransportadoraServiceImpl implements TransportadoraService {
 
     private final TransportadoraRepository transportadoraRepository;
     private final TransportadoraMapper mapper;
+    private final PedidoRepository pedidoRepository;
 
     @Override
     public TransportadoraResponse criar(TransportadoraCreateRequest request) {
@@ -138,10 +142,12 @@ public class TransportadoraServiceImpl implements TransportadoraService {
     public TransportadoraResponse inativar(Long id) {
         Transportadora transportadora = buscarTransportadoraOuFalhar(id);
 
-        //boolean possuiEntregasPendentes = pedidoRepository
-        //        .existsByTransportadoraIdAndStatusEntrega(transportadora.getId(), StatusEntrega.PENDENTE);
+        boolean possuiEntregasPendentes = pedidoRepository
+                .existsByTransportadoraIdAndStatusNotIn(
+                        transportadora.getId(),
+                        List.of(StatusPedido.ENTREGUE, StatusPedido.CANCELADO));
 
-        //if (possuiEntregasPendentes) {
+        if (possuiEntregasPendentes) {
             throw new BusinessRuleException(
                     "Não é possível inativar a transportadora pois existem entregas pendentes associadas a ela");
         }

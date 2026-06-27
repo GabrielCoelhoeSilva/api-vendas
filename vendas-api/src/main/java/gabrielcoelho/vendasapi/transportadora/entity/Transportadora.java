@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(
-        name = "transportadoras",
+        name = "transportadora",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_transportadora_codigo", columnNames = "codigo"),
                 @UniqueConstraint(name = "uk_transportadora_cnpj", columnNames = "cnpj"),
